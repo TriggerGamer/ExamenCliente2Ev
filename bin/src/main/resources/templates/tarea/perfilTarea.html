@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Inicio</title>
+	<link rel="stylesheet" th:href="@{/css/estilo.css}">
+	<script th:src="@{/js/ajax.js}"></script>
+
+	<style>
+		.badge {
+			font-size: 1em;
+		}
+		
+	#datos {width:  500px;
+	margin-right: auto;
+	margin-left: auto;
+	}
+	</style>
+	<link th:href="@{/css/signin.css}" rel="stylesheet">
+
+
+	<script>
+
+		function editarTarea() {
+			$("#modal").show();
+		}
+		
+		function cerrarModal(){
+			$("#modal").hide();
+		}
+		
+	</script>
+
+</head>
+
+<body>
+
+	<nav th:replace="fragments/navbar"></nav>
+
+	<div id="wrapper" class="text-center">
+
+<div id="datos">
+		<fieldset>
+			<legend>Tarea NOMBRE_TAREA</legend>
+
+				<p><strong>Descripción</strong>.</p>
+				<p>Texto que compoine la descripción</p>
+				
+				<p><strong>Prioridad</strong>.</p>
+				<p>Prioridad de la tarea</p>
+				
+				<p><strong>Empleado</strong>.</p>
+				<p>Empleado que realiza la tarea</p>
+				<p><strong>Estado</strong>.</p>
+				<p>Estado de la tarea</p>
+						
+
+
+			
+			<center> <button onclick="editarTarea()" class="btn btn-lg btn-primary btn-block">Editar Tarea
+				</button> </center>
+
+		</fieldset>
+		
+		</div>
+	</div >
+
+	<div id="modal" class="modal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Editar Tarea</h5>
+					<button type="button" onclick="cerrarModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="@{/tarea/editar}" th:method="POST" class="form-signin">
+
+						<fieldset>
+
+							<div class="form-group">
+								<label for="inputNombre">Identificador de la tarea</label> <input type="text"
+									class="form-control" id="inputId" disabled>
+							</div>
+
+
+							<div class="form-group">
+								<label for="inputNombre">Nombre de la tarea</label> <input type="text"
+									class="form-control" id="inputNombre" aria-describedby="emailHelp"
+									placeholder="Crear test de unidad..">
+								<small id="inputNombre" class="form-text text-muted">Se
+									claro con el nombre</small>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPrioridad">Prioridad</label>
+								<select class="form-select" id="inputPrioridad">
+									<option value="1">Baja</option>
+									<option value="2">Media</option>
+									<option value="3">Alta</option>
+								</select>
+							</div>
+
+
+
+							<div class="form-group">
+								<label for="inputTrabajadores">Empleados</label> <select multiple="" class="form-select"
+									id="inputTrabajadores">
+									<option value="1">Luis</option>
+									<option value="2">Erik</option>
+									<option value="3">Sergio</option>
+									<option value="4">Alejandro</option>
+									<option value="5">Salma</option>
+									<option value="6">Jessica</option>
+									<option value="7">Moha</option>
+									<option value="8">David</option>
+									<option value="9">Christohper</option>
+								</select>
+							</div>
+							<br>
+							<center> <button onclick="editarTarea" class="btn btn-lg btn-primary btn-block">Modificar
+									Tarea
+								</button> </center>
+
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>

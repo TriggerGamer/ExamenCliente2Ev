@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Inicio</title>
+	<link rel="stylesheet" th:href="@{/css/estilo.css}">
+	<script th:src="@{/js/ajax.js}"></script>
+
+	<style>
+		.badge {
+			font-size: 1em;
+		}
+	</style>
+
+
+</head>
+
+<body>
+
+	<nav th:replace="fragments/navbar"></nav>
+
+	<div id="wrapper">
+
+		<h2>
+			<center> Proyecto NOMBRE_DEL_PROYECTO </center>
+		</h2>
+
+		<div class="izq">
+
+			<table class="table table-hover">
+				<thead>
+					<tr class="table-primary">
+						<th scope="col">Nombre Tarea</th>
+						<th scope="col">Prioridad</th>
+						<th scope="col">Estado</th>
+						<th scope="col">Ver Tarea</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Tarea 1</td>
+						<td><span class="badge bg-primary">Baja</span></td>
+						<td>Preparada
+						</td>
+						<td><button type="button" class="btn btn-success">Ver
+								Tarea</button></td>
+					</tr>
+					<tr>
+						<td>Tarea 2</td>
+						<td><span class="badge bg-warning">Media</span></td>
+						<td> En Curso</td>
+						<td><button type="button" class="btn btn-success">Ver
+								Tarea</button></td>
+					</tr>
+					<tr>
+						<td>Tarea 3</td>
+						<td><span class="badge bg-danger">Alta</span></td>
+						<td>En revisión</td>
+						<td><button type="button" class="btn btn-success">Ver
+								Tarea</button></td>
+					</tr>
+					<tr>
+						<td>Tarea 4</td>
+						<td><span class="badge bg-danger">Alta</span></td>
+						<td>Finalizada</td>
+						<td><button type="button" class="btn btn-success">Ver
+								Tarea</button></td>
+					</tr>
+
+
+				</tbody>
+			</table>
+
+		</div>
+
+		<div class="dch">
+
+			<div class="card card-custom bg-white border-white border-0">
+				<div class="card-body" style="overflow-y: auto">
+					<form th:action="@{/tarea/crear}" th:method="POST">
+						<fieldset>
+							<legend>Añadir Tarea</legend>
+
+							<div class="form-group">
+								<label for="inputNombre">Nombre de la tarea</label> <input type="email"
+									class="form-control" id="inputNombre" aria-describedby="emailHelp"
+									placeholder="Crear test de unidad..">
+								<small id="inputNombre" class="form-text text-muted">Se
+									claro con el nombre</small>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPrioridad">Prioridad</label>
+								<select class="form-select" id="inputPrioridad">
+									<option value="1">Baja</option>
+									<option value="2">Media</option>
+									<option value="3">Alta</option>
+								</select>
+							</div>
+
+
+
+							<div class="form-group">
+								<label for="inputTrabajadores">Empleados</label> <select multiple="" class="form-select"
+									id="inputTrabajadores">
+									<option value="1">Luis</option>
+									<option value="2">Erik</option>
+									<option value="3">Sergio</option>
+									<option value="4">Alejandro</option>
+									<option value="5">Salma</option>
+									<option value="6">Jessica</option>
+									<option value="7">Moha</option>
+									<option value="8">David</option>
+									<option value="9">Christohper</option>
+								</select>
+							</div>
+							<br>
+							<center> <button class="btn btn-lg btn-primary btn-block" type="submit">Añadir Tarea
+								</button> </center>
+
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+</body>
+
+</html>

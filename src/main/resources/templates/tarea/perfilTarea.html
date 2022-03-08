@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Tarea</title>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}">
+	<script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery-3.5.0.js}"></script>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/css/estilo.css}">
+
+	<style>
+		.badge {
+			font-size: 1em;
+		}
+
+		#datos {
+			width: 500px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+	</style>
+
+	<link type="text/css" th:href="@{/css/signin.css}" rel="stylesheet">
+
+	<script>
+
+		function editarTarea() {
+			$("#modal").show();
+		}
+
+		function cerrarModal() {
+			$("#modal").hide();
+		}
+
+	</script>
+
+</head>
+
+<body>
+
+	<nav th:replace="fragments/navbar"></nav>
+
+	<div id="wrapper" class="text-center">
+
+		<div id="datos">
+			<fieldset>
+				<legend th:text="${tarea.titulo}"></legend>
+
+				<p><strong>Descripción</strong></p>
+				<p th:text="${tarea.descripcion}"></p>
+
+				<p><strong>Prioridad</strong></p>
+				<p th:text="${tarea.prioridad}"></p>
+
+				<p><strong>Empleado</strong></p>
+				<p th:text="${empleado.nombreUsuario}"></p>
+
+				<p><strong>Estado</strong></p>
+				<p th:text="${tarea.estado}"></p>
+
+				<center>
+					<button onclick="editarTarea()" class="btn btn-lg btn-primary btn-block">Editar Tarea </button>
+				</center>
+			</fieldset>
+		</div>
+	</div>
+
+	<div id="modal" class="modal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Editar Tarea</h5>
+					<button type="button" onclick="cerrarModal()" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="@{/tarea/modificar/{id}(id=${tarea.id_tarea})}" th:method="POST" class="form-signin">
+
+						<fieldset>
+
+							<div class="form-group">
+								<label for="inputNombre">Identificador de la tarea</label>
+								<input type="text" th:value="${tarea.id_tarea}" class="form-control" id="inputId" disabled/>
+							</div>
+
+
+							<div class="form-group">
+								<label for="inputNombre">Nombre de la tarea</label>
+								<input type="text" th:value="${tarea.titulo}" class="form-control" name="Nombre"  id="inputNombre">
+								<small id="inputNombre2" class="form-text text-muted">Se
+									claro con el nombre</small>
+							</div>
+							
+							<div class="form-group">
+								<label for="inputDescripcion">Descripción de la tarea</label>
+								<textarea class="form-control" id="inputDescripcion" name="Descripcion"></textarea>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPrioridad">Prioridad</label>
+								<select class="form-select" name="Prioridad">
+									<option value="BAJA">Baja</option>
+									<option value="MEDIA">Media</option>
+									<option value="ALTA">Alta</option>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label for="inputTrabajadores">Empleado</label>
+								<select class="form-select" name="Trabajador">
+									<option th:each="empleado : ${empleados}" th:text="${empleado.nombreUsuario}" th:value="${empleado.nombreUsuario}"></option>
+								</select>
+							</div>
+							
+							<div class="form-group">
+								<label for="inputEstado">Estado</label>
+								<select class="form-select" name="Estado">
+									<option value="En Curso">En Curso</option>
+									<option value="En revisión">En revisión</option>
+									<option value="Finalizada">Finalizada</option>
+								</select>
+							</div>
+							<br>
+							<center> <button type="submit" class="btn btn-lg btn-primary btn-block">Modificar Tarea </button> </center>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>

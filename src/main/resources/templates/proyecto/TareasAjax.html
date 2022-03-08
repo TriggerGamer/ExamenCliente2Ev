@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+	<title>Examen 2º Ev</title>
+
+	<meta name="Author" content="Erick José">
+
+	<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+
+	<script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+	<script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/kanban.js}"></script>
+	<script type="text/javascript" th:src="@{/js/tarea.js}"></script>
+	<script type="text/javascript" th:src="@{/js/AjaxExamenCliente.js}"></script>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/css/kanban.css}" />
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+</head>
+
+<body>
+
+	<nav th:replace="fragments/navbar"></nav>
+
+	<br>
+
+	<div class="container-fluid pt-3">
+		<div style="text-align: center;">
+			<div class="form-check form-switch " style="float: left; font-size: 20px;">
+				<input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
+				<label class="form-check-label" for="flexSwitchCheckChecked">Mis tareas</label>
+			</div>
+			<h2 class="font-weight-light " style="display: inline-block; text-align: center;">Kanban Board</h2>
+
+
+			<!-- <button type="button" style="display: inline-block;float: right;" class="btn btn-secondary" onclick="$('#crear_modal').show()"> Mis Tareas 👤 </button> -->
+			<button type="button" style="display: inline-block; float: right;" class="btn btn-success"
+				onclick="$('#crear_modal').show()">Crear Tarea ➕</button>
+		</div>
+		<div class="row flex-row flex-sm-nowrap py-3">
+			<div class="col-sm-6 col-md-4 col-xl-3">
+				<div class="card bg-light">
+					<div class="card-body">
+						<h6 class="card-title text-uppercase text-truncate py- columna">Preparada</h6>
+						<div class="items border border-light" id="Preparada">
+
+							<div class="dropzone rounded" ondrop="drop(event)" ondragover="allowDrop(event)"
+								ondragleave="clearDrop(event)"> &nbsp; </div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-4 col-xl-3">
+				<div class="card bg-light">
+					<div class="card-body">
+						<h6 class="card-title text-uppercase text-truncate py-2 columna">En Curso</h6>
+						<div class="items border border-light" id="En Curso">
+						
+							<div class="dropzone rounded" ondrop="drop(event)" ondragover="allowDrop(event)"
+								ondragleave="clearDrop(event)"> &nbsp; </div>
+								
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-4 col-xl-3">
+				<div class="card bg-light">
+					<div class="card-body">
+						<h6 class="card-title text-uppercase text-truncate py-2 columna">En revisión</h6>
+						<div class="items border border-light" id="En revisión">
+							
+							<div class="dropzone rounded" ondrop="drop(event)" ondragover="allowDrop(event)"
+								ondragleave="clearDrop(event)"> &nbsp; </div>
+						
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-4 col-xl-3">
+				<div class="card">
+					<div class="card-body">
+						<h6 class="card-title text-uppercase text-truncate py-2 columna">Finalizada</h6>
+						<div class="items border border-light" id="Finalizada">
+						
+							<div class="dropzone rounded" ondrop="drop(event)" ondragover="allowDrop(event)"
+								ondragleave="clearDrop(event)"> &nbsp; </div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="editar_modal" class="modal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Editar Tarea</h5>
+					<button type="button" onclick="$('#editar_modal').hide()" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form action="" method="POST" class="form-signin">
+
+						<fieldset id="anadirBorrar">
+
+							<div class="form-group">
+								<label>Identificador de la tarea</label> <input type="text"
+									class="form-control" id="inputId" disabled>
+							</div>
+
+
+							<div class="form-group">
+								<label for="inputNombre2">Nombre de la tarea</label> <input type="text"
+									class="form-control" id="inputNombre2" placeholder="Crear test de unidad..">
+								<small class="form-text text-muted">Se
+									claro con el nombre</small>
+							</div>
+
+							<div class="form-group">
+								<label for="inputDescripcion2">Descripcion de la tarea</label> <textarea class="form-control"
+									id="inputDescripcion2"
+									placeholder="Crear pruebas para validadar las funcionalidades."></textarea>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPrioridad2">Prioridad</label>
+								<select class="form-select" id="inputPrioridad2">
+									<option value="BAJA">Baja</option>
+									<option value="MEDIA">Media</option>
+									<option value="ALTA">Alta</option>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label for="inputTrabajador2">Empleados</label> <select class="form-select"
+									id="inputTrabajador2">
+									<option value="1">Luis</option>
+									<option value="2">Erik</option>
+									<option value="3">Sergio</option>
+									<option value="4">Alejandro</option>
+									<option value="5">Salma</option>
+									<option value="6">Jessica</option>
+									<option value="7">Moha</option>
+									<option value="8">David</option>
+									<option value="9">Christohper</option>
+								</select>
+							</div>
+							<br>
+							<center> <button id="editarTarea" class="btn btn-lg btn-primary btn-block"> Modificar Tarea </button> </center>
+
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="crear_modal" class="modal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Añadir Tarea</h5>
+					<button type="button" onclick="$('#crear_modal').hide()" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="@{/tarea/crear/}" th:method="POST" class="form-signin">
+						<fieldset>
+
+							<div class="form-group">
+								<label for="inputNombre">Nombre de la tarea</label> <input type="text"
+									class="form-control" id="inputNombre" placeholder="Crear tarea del proyecto">
+								<small id="inputNombre" class="form-text text-muted">Se
+									claro con el nombre</small>
+							</div>
+							<div class="form-group">
+								<label for="inputNombre">Descripcion de la tarea</label> <textarea class="form-control"
+									id="inputDescripcion"
+									placeholder="Crear pruebas para validadar las funcionalidades."></textarea>
+							</div>
+							<div class="form-group">
+								<label for="inputPrioridad">Prioridad</label>
+								<select class="form-select" id="inputPrioridad">
+									<option value="BAJA">Baja</option>
+									<option value="MEDIA">Media</option>
+									<option value="ALTA">Alta</option>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label for="inputTrabajador">Empleados</label> <select class="form-select"
+									id="inputTrabajador">
+									<option value="1">Luis</option>
+									<option value="2">Erik</option>
+									<option value="3">Sergio</option>
+									<option value="4">Alejandro</option>
+									<option value="5">Salma</option>
+									<option value="6">Jessica</option>
+									<option value="7">Moha</option>
+									<option value="8">David</option>
+									<option value="9">Christohper</option>
+								</select>
+							</div>
+							<br>
+							<center> <button class="btn btn-lg btn-primary btn-block" type="submit" id="anadirTarea">Añadir Tarea </button> </center>
+
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+</body>
+
+</html>

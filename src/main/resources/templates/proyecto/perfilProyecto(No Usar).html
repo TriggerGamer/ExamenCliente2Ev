@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Inicio</title>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}">
+	<script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery-3.5.0.js}"></script>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/css/estilo.css}">
+	
+	<script type="text/javascript" th:src="@{/js/ajax.js}"></script>
+
+	<style>
+		.badge {
+			font-size: 1em;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<nav th:replace="fragments/navbar"></nav>
+
+	<div id="wrapper">
+
+		<h2>
+			<center th:text="${proyecto.nombre}"> </center>
+		</h2>
+
+		<div class="izq">
+
+			<table class="table table-hover">
+				<thead>
+					<tr class="table-primary">
+						<th scope="col">Nombre Tarea</th>
+						<th scope="col">Prioridad</th>
+						<th scope="col">Estado</th>
+						<th scope="col">Ver Tarea</th>
+					</tr>
+				</thead>
+				<tbody id="resultados">
+					<tr th:each="tarea : ${tareas}">
+						<td th:text="${tarea.titulo}"></td>
+
+						<th:block th:switch="${tarea.prioridad}">
+							<td th:case="'BAJA'">
+								<span class="badge bg-primary" th:text="${tarea.prioridad}"></span>
+							</td>
+							<td th:case="'MEDIA'">
+								<span class="badge bg-warning" th:text="${tarea.prioridad}"></span>
+							</td>
+							<td th:case="'ALTA'">
+								<span class="badge bg-danger" th:text="${tarea.prioridad}"></span>
+							</td>
+						</th:block>
+						
+						<td th:text="${tarea.estado}"></td>
+						<td><a type="button" class="btn btn-success" th:href="@{/tarea/{id}(id=${tarea.id_tarea})}">Ver Tarea</a></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+		<div class="dch">
+
+			<div class="card card-custom bg-white border-white border-0">
+				<div class="card-body" style="overflow-y: auto">
+					<form th:action="@{/tarea/crear/{id}(id=${proyecto.id_proyecto})}" th:method="POST" id="formTareas">
+						<fieldset>
+							<legend>Añadir Tarea</legend>
+
+							<div class="form-group">
+								<label for="inputNombre">Nombre de la tarea</label>
+								<input type="text" class="form-control" id="inputNombre" placeholder="Crear tarea del proyecto..">
+								<small id="inputNombre2" class="form-text text-muted">Se claro con el nombre</small>
+							</div>
+							
+							<div class="form-group">
+								<label for="inputDescripcion">Descripción de la tarea</label>
+								<textarea class="form-control" id="inputDescripcion"></textarea>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPrioridad">Prioridad</label>
+								<select class="form-select" id="inputPrioridad">
+									<option value="BAJA">Baja</option>
+									<option value="MEDIA">Media</option>
+									<option value="ALTA">Alta</option>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label for="inputTrabajadores">Empleado</label>
+								<select class="form-select" id="inputTrabajador">
+									<option th:each="empleado : ${empleados}" th:text="${empleado.nombreUsuario}" th:value="${empleado.nombreUsuario}"></option>
+								</select>
+							</div>
+							<br>
+							<center> <button id="anadirTarea" class="btn btn-lg btn-primary btn-block" type="submit">Añadir Tarea </button> </center>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+</body>
+
+</html>
