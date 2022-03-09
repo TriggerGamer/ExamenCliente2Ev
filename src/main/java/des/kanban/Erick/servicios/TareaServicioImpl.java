@@ -62,4 +62,13 @@ public class TareaServicioImpl implements TareaServicio{
 		return tarea;
 	}
 
+	@Override
+	public void borrarTarea(int id_tarea){
+		try {
+			tareaRepo.deleteById(id_tarea);
+		} catch (Exception e) {
+			
+		}
+	}
+
 }

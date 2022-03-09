@@ -31,7 +31,7 @@ function cargarTareasArray() {
 				tarea2.id_tarea = tarea.id_tarea;
 				tarea2.titulo = tarea.titulo;
 				tarea2.descripcion = tarea.descripcion;
-				tarea2.usuario = tarea.nombreUsuario;
+				tarea2.nombreUsuario = tarea.nombreUsuario;
 				tarea2.prioridad = tarea.prioridad;
 				tarea2.estado = tarea.estado;
 
@@ -79,7 +79,7 @@ function tareaDom(tarea) {
 
 	let link2 = document.createElement("a");
 	link2.setAttribute("style", "text-align: right; float: right;");
-	link2.textContent = tarea.usuario;
+	link2.textContent = tarea.nombreUsuario;
 
 	let descp = document.createElement("p");
 	descp.textContent = tarea.descripcion;
@@ -189,13 +189,20 @@ function verTarea(btn, tarea) {
 		descripcion.value = tarea.descripcion;
 		
 		var editarForm = document.getElementById("anadirBorrar");
-		
-		var button = document.createElement("button");
-		button.classList.add("btn", "btn-primary", "btn-lg", "btn-block");
-		button.textContent = "Borrar Tarea";
-		eliminarTarea(button);
-		
-		editarForm.appendChild(button);
+		var botonBorrar = document.getElementById("botonBorrar");
+
+		if(botonBorrar != null){
+			eliminarTarea(botonBorrar, tarea.id_tarea);
+		}else{
+			var button = document.createElement("button");
+			button.classList.add("btn", "btn-primary", "btn-lg", "btn-block");
+			button.setAttribute("id", "botonBorrar");
+			button.textContent = "Borrar Tarea";
+			eliminarTarea(button, tarea.id_tarea);
+
+			editarForm.appendChild(button);
+		}
+
 	})
 }
 
@@ -243,6 +250,20 @@ function editarTarea(event) {
 
 //Método para ver mis tareas
 function misTareas(){
+
+	var token = $("meta[name='_csrf']").attr("content");
+	
+	fetch("/usuario/obtener", {
+		headers: { "Content-Type": "application/json; charset=utf-8", 'X-CSRF-TOKEN': token }, method: 'GET', credentials: 'same-origin'
+	})
+		.then(res => res.json())
+		.then(response => {
+
+			var newArray = ArrayTareas.filter(tarea => tarea.nombreUsuario == response.nombreUsuario);
+
+			console.log(newArray);
+		})
+
 	
 }
 
@@ -251,5 +272,28 @@ function eliminarTarea(btn, idTarea){
 
 	btn.addEventListener("click", function(){
 		
+		var token = $("meta[name='_csrf']").attr("content");
+
+		fetch("/tarea/borrar/" + idTarea, {
+			headers: { "Content-Type": "application/json; charset=utf-8", 'X-CSRF-TOKEN': token }, method: 'GET', credentials: 'same-origin'
+		})
+			.then(function(response) {
+			
+				if (response.ok) {
+					return response.json();
+				}
+				else{
+					alert("Lo sentimos ha habido un error, pruebe mas tarde");
+				}
+			})
+			.then(response => {
+				for(var i = 0; i < ArrayTareas.length; i++){
+					if(ArrayTareas[i].id_tarea == idTarea){
+						ArrayTareas.splice(i, 1);
+					}
+				}
+
+				pintarTareas(ArrayTareas);
+			})
 	});
 }

@@ -45,10 +45,14 @@ public class UsuarioController {
 		return "";
 	}
 
-//	@GetMapping("/listar")
-//	public List<Usuario> listarUsuarios () {
-//		
-//		return servicio.obtenerTodosLosUsuarios();
-//	}
+	@ResponseBody
+	@GetMapping("/obtener")
+	public String getLogin (HttpSession session) {
+		
+		String nombre = (String) session.getAttribute("user");
+		
+		return nombre;
+	}
+
 	
 }

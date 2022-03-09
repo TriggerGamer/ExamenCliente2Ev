@@ -85,4 +85,15 @@ public class TareaController {
 		
 		return new ResponseEntity<Object>(tarea2, HttpStatus.OK);
 	}
+
+	// Métodos para borrar tareas
+	@ResponseBody
+	@GetMapping("/borrar/{id_tarea}")
+	public ResponseEntity<Object> borrarTarea(@PathVariable int id_tarea) {
+
+		// Borrar los datos
+		servicioTarea.borrarTarea(id_tarea);
+		
+		return  new ResponseEntity<Object>("true", HttpStatus.OK);;
+	}
 }
