@@ -61,6 +61,15 @@ public class TareaServicioImpl implements TareaServicio{
 				
 		return tarea;
 	}
+	
+	public Tarea modificarEstadoTarea(int idTarea, String Estado){
+		
+		Tarea tarea = tareaRepo.getById(idTarea);
+		
+		tarea.setEstado(Estado);
+				
+		return tarea;
+	}
 
 	@Override
 	public void borrarTarea(int id_tarea){

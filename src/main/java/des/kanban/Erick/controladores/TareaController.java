@@ -8,12 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -71,29 +71,43 @@ public class TareaController {
 	
 	@ResponseBody
 	@PostMapping("/modificar/{idTarea}")
-	public ResponseEntity<Object> postmodificarTarea (@PathVariable int idTarea, @RequestBody Map<String, String> json) {
+	public ResponseEntity<Object> modificarTarea (@PathVariable int idTarea, @RequestBody Map<String, String> json) {
 		
-		String Nombre = json.get("titulo");
+		String titulo = json.get("titulo");
 		String Prioridad = json.get("prioridad");
 		String Trabajador = json.get("empleado");
 		String Estado = json.get("estado"); 
 		String Descripcion = json.get("descripcion");
 		
-		Tarea tarea = servicioTarea.modificarTarea(idTarea, Nombre, Prioridad, Trabajador, Estado, Descripcion);
+		Tarea tarea = servicioTarea.modificarTarea(idTarea, titulo, Prioridad, Trabajador, Estado, Descripcion);
 		
-		TareaDto tarea2 = new TareaDto();
+		TareaDto tarea2 = new TareaDto(tarea.getId_tarea(), tarea.getTitulo(), tarea.getDescripcion(), tarea.getUsuario().getNombreUsuario(), tarea.getPrioridad(), tarea.getEstado());
+		
+		return new ResponseEntity<Object>(tarea2, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@PostMapping("/modificar/estado/{idTarea}")
+	public ResponseEntity<Object> modificarEstadoTarea (@PathVariable int idTarea, @RequestBody Map<String, String> json) {
+		
+		
+		String Estado = json.get("estado"); 
+		
+		Tarea tarea = servicioTarea.modificarEstadoTarea(idTarea, Estado);
+		
+		TareaDto tarea2 = new TareaDto(tarea.getId_tarea(), tarea.getTitulo(), tarea.getDescripcion(), tarea.getUsuario().getNombreUsuario(), tarea.getPrioridad(), tarea.getEstado());
 		
 		return new ResponseEntity<Object>(tarea2, HttpStatus.OK);
 	}
 
 	// Métodos para borrar tareas
 	@ResponseBody
-	@GetMapping("/borrar/{id_tarea}")
-	public ResponseEntity<Object> borrarTarea(@PathVariable int id_tarea) {
+	@DeleteMapping("/borrar/{idTarea}")
+	public ResponseEntity<Object> borrarTarea(@PathVariable int idTarea) {
 
 		// Borrar los datos
-		servicioTarea.borrarTarea(id_tarea);
+		servicioTarea.borrarTarea(idTarea);
 		
-		return  new ResponseEntity<Object>("true", HttpStatus.OK);;
+		return new ResponseEntity<Object>("true", HttpStatus.OK);
 	}
 }

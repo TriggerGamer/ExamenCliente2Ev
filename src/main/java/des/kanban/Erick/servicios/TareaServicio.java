@@ -10,6 +10,8 @@ public interface TareaServicio {
 	
 	public Tarea modificarTarea(int idTarea, String NombreTarea, String Prioridad, String Empleado, String Estado, String Descripcion);
 	
+	public Tarea modificarEstadoTarea(int idTarea, String Estado);
+	
 	public void borrarTarea(int id_tarea);
 	
 }

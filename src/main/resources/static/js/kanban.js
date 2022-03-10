@@ -74,8 +74,9 @@ function despuesDeSoltar(event) {
 	var h6 = lista.parentNode.childNodes[1];
 	
 	console.log(this.id + "  " + h6.textContent);
-	return h6.textContent;
-
+	
+	cambiarCategoria(this.id, h6.textContent);
+	
 }
 
 function anadirTarjeta() {

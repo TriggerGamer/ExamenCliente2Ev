@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	cargarTareasArray();
 	$("#anadirTarea").click(crearTarea);
 	$("#editarTarea").click(editarTarea);
+	$("#misTareas").click(misTareas);
 
 });
 
@@ -54,6 +55,7 @@ function tareaDom(tarea) {
 	divCard.setAttribute("id", "Tarea" + tarea.id_tarea);
 	divCard.setAttribute("draggable", "true");
 	divCard.setAttribute("ondragstart", "drag(event)");
+	divCard.setAttribute("name", tarea.estado);
 
 	let divCardBody = document.createElement("div");
 	divCardBody.classList.add("card-body", "p-2");
@@ -62,31 +64,34 @@ function tareaDom(tarea) {
 	divCardTitle.classList.add("card-title");
 
 	let span = document.createElement("span");
+	span.setAttribute("id", "prioridadTarea" + tarea.id_tarea);
 	if (tarea.prioridad == "BAJA") {
-		span.classList.add("badge", "rounded-pill", "bg-success");
+		span.setAttribute("class", "badge rounded-pill bg-success");
 	}
 	else if (tarea.prioridad == "MEDIA") {
-		span.classList.add("badge", "rounded-pill", "bg-warning");
+		span.setAttribute("class", "badge rounded-pill bg-warning");
 	}
 	else {
-		span.classList.add("badge", "rounded-pill", "bg-danger");
+		span.setAttribute("class", "badge rounded-pill bg-danger");
 	}
-
 	span.textContent = tarea.prioridad;
+
 	let link = document.createElement("a");
 	link.classList.add("lead", "font-weight-light");
 	link.textContent = "Tarea " + tarea.id_tarea;
 
 	let link2 = document.createElement("a");
 	link2.setAttribute("style", "text-align: right; float: right;");
+	link2.setAttribute("id", "nombreUTarea" + tarea.id_tarea);
 	link2.textContent = tarea.nombreUsuario;
 
-	let descp = document.createElement("p");
-	descp.textContent = tarea.descripcion;
+	let titulo = document.createElement("p");
+	titulo.setAttribute("id", "tituloTarea" + tarea.id_tarea);
+	titulo.textContent = tarea.titulo;
 
 	let button = document.createElement("button");
 	button.classList.add("btn", "btn-primary", "btn-sm");
-	button.textContent = "Ver Tarea";
+	button.textContent = "View";
 	verTarea(button, tarea);
 
 	divCardTitle.appendChild(span);
@@ -94,7 +99,7 @@ function tareaDom(tarea) {
 	divCardTitle.appendChild(link2);
 
 	divCardBody.appendChild(divCardTitle);
-	divCardBody.appendChild(descp);
+	divCardBody.appendChild(titulo);
 	divCardBody.appendChild(button);
 
 	divCard.appendChild(divCardBody);
@@ -104,19 +109,25 @@ function tareaDom(tarea) {
 	divDropZone.setAttribute("ondrop", "drop(event)");
 	divDropZone.setAttribute("ondragover", "allowDrop(event)");
 	divDropZone.setAttribute("ondragleave", "clearDrop(event)");
+	divDropZone.innerHTML = "&nbsp;";
 
 	let columna = document.getElementById(tarea.estado);
 	columna.appendChild(divCard);
 	columna.appendChild(divDropZone);
+
 	
 }
 
 //Insertar todas las tareas en el dom
 function pintarTareas(todasTareas) {
+	
+	mantenerDropColumnas();
+	borrarColumnas();
+
 	for (let tarea of todasTareas) {
 		tareaDom(tarea);
 	}
-	
+
 	$('.draggable').on('dragend', despuesDeSoltar);
 
 }
@@ -148,11 +159,11 @@ function crearTarea(event) {
 		body: JSON.stringify({ titulo: titulo, descripcion: descripcion, prioridad: $('#inputPrioridad').val(), estado: "Preparada", empleado: $('#inputTrabajador').val() })
 	})
 		.then(function(response) {
-			
+
 			if (response.ok) {
 				return response.json();
 			}
-			else{
+			else {
 				alert("lo sentimos ha habido un error");
 			}
 
@@ -170,37 +181,78 @@ function crearTarea(event) {
 
 			ArrayTareas.push(tarea2);
 
+			$('#crear_modal').hide();
+
 			tareaDom(tarea);
 		})
 }
 
+// Método para cambiar la categoria
+function cambiarCategoria(id, estado) {
+	
+	var newArray = id.split("a");
+	var idTarea = newArray[2];
+	
+	var token = $("meta[name='_csrf']").attr("content");
+	
+	fetch("/tarea/modificar/estado/" + idTarea, {
+		headers: { "Content-Type": "application/json; charset=utf-8", 'X-CSRF-TOKEN': token }, method: 'POST',
+		credentials: 'same-origin',
+		body: JSON.stringify({ estado: estado })
+	})
+		.then(function(response) {
+			if (response.ok) {
+				return response.json();
+			}
+			else {
+				alert("ha ocurrido un error lo sentimos, pruebe más tarde o nunca");
+			}
+		})
+		.then(tarea => {
+			
+			for (var i = 0; i < ArrayTareas.length; i++) {
+				if (ArrayTareas[i].id_tarea == idTarea) {
+
+					ArrayTareas[i].estado = tarea.estado;
+					
+					break;
+				}
+			}
+		})
+	
+}
 //Ver tareas en el modal
 function verTarea(btn, tarea) {
 
 	btn.addEventListener("click", function() {
-		
+
 		$('#editar_modal').show();
 		var idTarea = document.getElementById("inputId");
 		var titulo = document.getElementById("inputNombre2");
 		var descripcion = document.getElementById("inputDescripcion2");
 
-		idTarea.value = tarea.id_tarea;
-		titulo.value = tarea.titulo;
-		descripcion.value = tarea.descripcion;
-		
+		var newArray = ArrayTareas.filter(tareas => tareas.id_tarea == tarea.id_tarea);
+
+		idTarea.value = newArray[0].id_tarea;
+		titulo.value = newArray[0].titulo;
+		descripcion.value = newArray[0].descripcion;
+
 		var editarForm = document.getElementById("anadirBorrar");
 		var botonBorrar = document.getElementById("botonBorrar");
 
-		if(botonBorrar != null){
+		if (botonBorrar != null) {
 			eliminarTarea(botonBorrar, tarea.id_tarea);
-		}else{
+		}
+		else {
+			var centro = document.createElement("center");
 			var button = document.createElement("button");
-			button.classList.add("btn", "btn-primary", "btn-lg", "btn-block");
+			button.classList.add("btn", "btn-primary", "btn-lg", "btn-block", "mt-2");
 			button.setAttribute("id", "botonBorrar");
 			button.textContent = "Borrar Tarea";
 			eliminarTarea(button, tarea.id_tarea);
 
-			editarForm.appendChild(button);
+			editarForm.appendChild(centro);
+			centro.appendChild(button);
 		}
 
 	})
@@ -210,10 +262,6 @@ function verTarea(btn, tarea) {
 function editarTarea(event) {
 
 	event.preventDefault();
-	
-	var ele = this;
-	var lista = ele.parentNode;
-	var h6 = lista.parentNode.childNodes[1];
 
 	var idTarea = document.getElementById("inputId");
 
@@ -229,30 +277,59 @@ function editarTarea(event) {
 		descripcion = " ";
 	}
 
-	fetch("/tarea/modificar/" + idTarea, {
+	fetch("/tarea/modificar/" + idTarea.value, {
 		headers: { "Content-Type": "application/json; charset=utf-8", 'X-CSRF-TOKEN': token }, method: 'POST',
 		credentials: 'same-origin',
-		body: JSON.stringify({ titulo: titulo, descripcion: descripcion, prioridad: $('#inputPrioridad2').val(), estado: h6.textContent, empleado: $('#inputTrabajador2').val() })
+		body: JSON.stringify({ titulo: titulo, descripcion: descripcion, prioridad: $('#inputPrioridad2').val(), estado: "Preparada", empleado: $('#inputTrabajador2').val() })
 	})
 		.then(function(response) {
 			if (response.ok) {
 				return response.json();
 			}
+			else {
+				alert("ha ocurrido un error lo sentimos");
+			}
 		})
 		.then(tarea => {
-			var tarea = this;
-			
-			tarea.parentNode;
-			
-			
+
+			let titulo = document.getElementById("tituloTarea" + tarea.id_tarea);
+			let nombreUsuario = document.getElementById("nombreUTarea" + tarea.id_tarea);
+			let prioridad = document.getElementById("prioridadTarea" + tarea.id_tarea);
+
+			titulo.textContent = tarea.titulo;
+			nombreUsuario.textContent = tarea.nombreUsuario;
+			if (tarea.prioridad == "BAJA") {
+				prioridad.setAttribute("class", "badge rounded-pill bg-success");
+			}
+			else if (tarea.prioridad == "MEDIA") {
+				prioridad.setAttribute("class", "badge rounded-pill bg-warning");
+			}
+			else {
+				prioridad.setAttribute("class", "badge rounded-pill bg-danger");
+			}
+			prioridad.textContent = tarea.prioridad;
+
+			for (var i = 0; i < ArrayTareas.length; i++) {
+				if (ArrayTareas[i].id_tarea == idTarea) {
+
+					ArrayTareas[i].titulo = tarea.titulo;
+					ArrayTareas[i].nombreUsuario = tarea.nombreUsuario;
+					ArrayTareas[i].descripcion = tarea.descripcion;
+					ArrayTareas[i].prioridad = tarea.prioridad;
+
+					break;
+				}
+			}
+
+			$('#editar_modal').hide();
 		})
 }
 
 //Método para ver mis tareas
-function misTareas(){
+function misTareas() {
 
 	var token = $("meta[name='_csrf']").attr("content");
-	
+
 	fetch("/usuario/obtener", {
 		headers: { "Content-Type": "application/json; charset=utf-8", 'X-CSRF-TOKEN': token }, method: 'GET', credentials: 'same-origin'
 	})
@@ -261,39 +338,97 @@ function misTareas(){
 
 			var newArray = ArrayTareas.filter(tarea => tarea.nombreUsuario == response.nombreUsuario);
 
-			console.log(newArray);
-		})
+			var check = document.getElementById("misTareas");
 
+			if (check.checked) {
+				pintarTareas(newArray);
+				console.log(newArray);
+			}
+			else {	
+				pintarTareas(ArrayTareas);
+			}
+		})
+}
+
+//Método para borrar las columnas
+function borrarColumnas() {
 	
+	let columna1 = document.getElementById("Preparada");
+	let columna2 = document.getElementById("En Curso");
+	let columna3 = document.getElementById("En revisión");
+	let columna4 = document.getElementById("Finalizada");
+	
+	columna1.replaceChildren();
+	columna2.replaceChildren();
+	columna3.replaceChildren();
+	columna4.replaceChildren();
+	
+	mantenerDropColumnas();
+}
+
+//Método para que el dropzone no se elimine de las columnas
+// Funciona como le da la gana
+function mantenerDropColumnas() {
+	
+	let DropZone1 = DropZonedemerde();
+	let DropZone2 = DropZonedemerde();
+	let DropZone3 = DropZonedemerde();
+	let DropZone4 = DropZonedemerde();
+
+	let columna1 = document.getElementById("Preparada");
+	let columna2 = document.getElementById("En Curso");
+	let columna3 = document.getElementById("En revisión");
+	let columna4 = document.getElementById("Finalizada");
+	
+	columna1.appendChild(DropZone1);
+	columna2.appendChild(DropZone2);
+	columna3.appendChild(DropZone3);
+	columna4.appendChild(DropZone4);
+		
+}
+
+function DropZonedemerde(){
+	
+	let DropZone = document.createElement("div");
+	DropZone.classList.add("dropzone", "rounded");
+	DropZone.setAttribute("ondrop", "drop(event)");
+	DropZone.setAttribute("ondragover", "allowDrop(event)");
+	DropZone.setAttribute("ondragleave", "clearDrop(event)");
+	DropZone.innerHTML = "&nbsp;";
+	return DropZone;
 }
 
 //Método para eliminar tareas
-function eliminarTarea(btn, idTarea){
+function eliminarTarea(btn, idTarea) {
 
-	btn.addEventListener("click", function(){
-		
+	btn.addEventListener("click", function() {
+
 		var token = $("meta[name='_csrf']").attr("content");
 
 		fetch("/tarea/borrar/" + idTarea, {
-			headers: { "Content-Type": "application/json; charset=utf-8", 'X-CSRF-TOKEN': token }, method: 'GET', credentials: 'same-origin'
+			headers: { "Content-Type": "application/json; charset=utf-8", 'X-CSRF-TOKEN': token }, method: 'DELETE', credentials: 'same-origin'
 		})
 			.then(function(response) {
-			
+
 				if (response.ok) {
 					return response.json();
 				}
-				else{
+				else {
 					alert("Lo sentimos ha habido un error, pruebe mas tarde");
 				}
 			})
 			.then(response => {
-				for(var i = 0; i < ArrayTareas.length; i++){
-					if(ArrayTareas[i].id_tarea == idTarea){
+
+				for (var i = 0; i < ArrayTareas.length; i++) {
+					if (ArrayTareas[i].id_tarea == idTarea) {
 						ArrayTareas.splice(i, 1);
+						break;
 					}
 				}
 
+				$('#editar_modal').hide();
 				pintarTareas(ArrayTareas);
+
 			})
 	});
 }
